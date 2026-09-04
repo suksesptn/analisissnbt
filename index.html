@@ -27,7 +27,7 @@
             opacity: 0;
         }
         .accordion-detail.open { 
-            max-height: 800px; 
+            max-height: 1000px; 
             opacity: 1; 
         }
         .rotate-icon { transition: transform 0.3s ease; }
@@ -149,13 +149,12 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1.5">Jenjang</label>
+                        <!-- PERBAIKAN: Hanya D3, D4, S1 -->
                         <select id="filterJenjang" class="w-full px-3 py-2.5 rounded-lg border border-slate-200 focus:border-primary outline-none text-sm">
                             <option value="">Semua Jenjang</option>
                             <option value="S1">S1</option>
                             <option value="D4">D4</option>
                             <option value="D3">D3</option>
-                            <option value="S2">S2</option>
-                            <option value="S3">S3</option>
                         </select>
                     </div>
                 </div>
@@ -194,10 +193,7 @@
 
                 <!-- Table Content -->
                 <div id="tableContent" class="hidden">
-                    <!-- Rows Container -->
-                    <div id="rowsContainer" class="divide-y divide-slate-100">
-                        <!-- Diisi oleh JavaScript -->
-                    </div>
+                    <div id="rowsContainer" class="divide-y divide-slate-100"></div>
                 </div>
             </div>
 
@@ -212,18 +208,26 @@
     </footer>
 
     <script>
-        // ==========================================================
-        // GANTI URL INI DENGAN URL APPS SCRIPT ANDA
-        // ==========================================================
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw9xOPd0jC-_0nSKpOZpRRzxO4pJW9sYmeuT8KwkpPTG3IAXFMgTAPCAet39ubnaVu9/exec";
         
         let currentUser = null;
         let allData = [];
         let expandedRow = null;
 
+        // Urutan tetap subtes sesuai permintaan
+        const SUBTES_ORDER = [
+            'Penalaran Umum',
+            'Pengetahuan dan Pemahaman Umum',
+            'Pemahaman Bacaan dan Menulis',
+            'Pengetahuan Kuantitatif',
+            'Literasi dalam Bahasa Indonesia - Saintek',
+            'Literasi dalam Bahasa Indonesia - Soshum',
+            'Literasi dalam Bahasa Inggris',
+            'Penalaran Matematika'
+        ];
+
         lucide.createIcons();
 
-        // ============ TAB SWITCH ============
         function switchTab(role) {
             const tabSiswa = document.getElementById('tabSiswa');
             const tabGuru = document.getElementById('tabGuru');
@@ -243,7 +247,6 @@
             }
         }
 
-        // ============ LOGIN HANDLERS ============
         document.getElementById('formSiswa').addEventListener('submit', async function(e) {
             e.preventDefault();
             await login('siswa', document.getElementById('nis').value, document.getElementById('tglLahir').value);
@@ -313,13 +316,14 @@
         function showError(msg) {
             document.getElementById('emptyState').classList.remove('hidden');
             document.getElementById('emptyState').innerHTML = `
-                <i data-lucide="alert-circle" class="w-12 h-12 text-rose-300 mx-auto mb-3"></i>
-                <p class="text-rose-600">${msg}</p>
+                <div class="p-12 text-center">
+                    <i data-lucide="alert-circle" class="w-12 h-12 text-rose-300 mx-auto mb-3"></i>
+                    <p class="text-rose-600">${msg}</p>
+                </div>
             `;
             lucide.createIcons();
         }
 
-        // ============ RENDER DATA DENGAN ACCORDION ============
         function renderData(data) {
             const container = document.getElementById('rowsContainer');
             const tableContent = document.getElementById('tableContent');
@@ -352,12 +356,11 @@
                     ? (scoreKeys.reduce((a, k) => a + parseFloat(scores[k] || 0), 0) / scoreKeys.length).toFixed(2)
                     : 0;
 
-                // Warna selang-seling untuk mobile
+                // Warna selang-seling
                 const isEven = index % 2 === 0;
                 const rowBg = isEven ? 'bg-white' : 'bg-slate-50';
                 const rowHover = isEven ? 'hover:bg-emerald-50' : 'hover:bg-emerald-100';
 
-                // Main Row
                 const row = document.createElement('div');
                 row.className = `accordion-row ${rowBg} transition-colors`;
                 row.dataset.id = index;
@@ -370,11 +373,11 @@
                         </div>
                         <div class="md:col-span-3">
                             <span class="md:hidden text-xs text-slate-400">PTN: </span>
-                            <span class="text-sm font-bold text-slate-900">${item.ptn || '-'}</span>
+                            <span class="text-sm font-bold text-slate-900 break-words">${item.ptn || '-'}</span>
                         </div>
                         <div class="md:col-span-4">
                             <span class="md:hidden text-xs text-slate-400">Jurusan: </span>
-                            <span class="text-sm text-slate-700 font-medium">${item.prodi || '-'}</span>
+                            <span class="text-sm text-slate-700 font-medium break-words">${item.prodi || '-'}</span>
                         </div>
                         <div class="md:col-span-2">
                             <span class="md:hidden text-xs text-slate-400">Jenjang: </span>
@@ -392,50 +395,32 @@
                         </div>
                     </div>
 
-                    <!-- Detail Panel (Accordion) -->
                     <div class="accordion-detail bg-gradient-to-br from-slate-50 to-emerald-50/30 border-t border-slate-100" id="detail-${index}">
                         <div class="px-4 md:px-5 py-5">
                             <div class="flex items-center gap-2 mb-4">
                                 <i data-lucide="bar-chart-2" class="w-5 h-5 text-primary"></i>
                                 <h4 class="font-bold text-slate-900">Detail Skor per Subtes</h4>
                             </div>
-                            
-                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3" id="subtes-grid-${index}">
-                                <!-- Diisi oleh JavaScript -->
-                            </div>
-
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3" id="subtes-grid-${index}"></div>
                             <div class="mt-4 pt-4 border-t border-slate-200 flex flex-wrap gap-4 text-xs text-slate-600">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-3 h-3 rounded bg-emerald-500"></span>
-                                    <span>Rata-rata skor subtes</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="w-3 h-3 rounded bg-rose-400"></span>
-                                    <span>Skor terendah</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="w-3 h-3 rounded bg-blue-400"></span>
-                                    <span>Skor tertinggi</span>
-                                </div>
+                                <div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-emerald-500"></span><span>Rata-rata skor subtes</span></div>
+                                <div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-rose-400"></span><span>Skor terendah</span></div>
+                                <div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-blue-400"></span><span>Skor tertinggi</span></div>
                             </div>
                         </div>
                     </div>
                 `;
-
                 container.appendChild(row);
             });
-
             lucide.createIcons();
         }
 
-        // ============ ACCORDION TOGGLE ============
         function toggleAccordion(index) {
             const detail = document.getElementById(`detail-${index}`);
             const row = document.querySelector(`.accordion-row[data-id="${index}"]`);
             const icon = row.querySelector('.detail-icon');
             const text = row.querySelector('.detail-text');
 
-            // Jika row ini sudah terbuka, tutup
             if (expandedRow === index) {
                 detail.classList.remove('open');
                 icon.classList.remove('open');
@@ -444,7 +429,6 @@
                 return;
             }
 
-            // Tutup row sebelumnya jika ada
             if (expandedRow !== null) {
                 const prevDetail = document.getElementById(`detail-${expandedRow}`);
                 const prevRow = document.querySelector(`.accordion-row[data-id="${expandedRow}"]`);
@@ -455,13 +439,11 @@
                 }
             }
 
-            // Buka row baru
             detail.classList.add('open');
             icon.classList.add('open');
             text.textContent = 'Tutup';
             expandedRow = index;
 
-            // Render subtes jika belum
             const grid = document.getElementById(`subtes-grid-${index}`);
             if (grid.children.length === 0) {
                 renderSubtes(index);
@@ -475,17 +457,18 @@
             const mins = item.min || {};
             const maxs = item.max || {};
 
-            // Urutkan subtes (rata-rata tertinggi dulu)
-            const sortedKeys = Object.keys(scores).sort((a, b) => parseFloat(scores[b]) - parseFloat(scores[a]));
+            // PERBAIKAN: Gunakan urutan tetap, bukan di-sort berdasarkan nilai
+            grid.innerHTML = SUBTES_ORDER.map(subtes => {
+                // Cek apakah subtes ini ada di data
+                if (!(subtes in scores)) return '';
 
-            grid.innerHTML = sortedKeys.map(subtes => {
                 const avg = parseFloat(scores[subtes] || 0).toFixed(2);
                 const min = parseFloat(mins[subtes] || 0).toFixed(2);
                 const max = parseFloat(maxs[subtes] || 0).toFixed(2);
                 
                 return `
                     <div class="subtes-card bg-white rounded-xl p-3 border border-slate-200 shadow-sm">
-                        <div class="text-xs text-slate-500 mb-2 font-medium leading-tight">${subtes}</div>
+                        <div class="text-xs text-slate-500 mb-2 font-medium leading-tight min-h-[2.5rem] flex items-center">${subtes}</div>
                         <div class="flex items-baseline gap-1 mb-2">
                             <span class="text-xl font-bold text-emerald-600">${avg}</span>
                             <span class="text-xs text-slate-400">rata²</span>
@@ -493,11 +476,11 @@
                         <div class="flex justify-between text-xs pt-2 border-t border-slate-100">
                             <div>
                                 <div class="text-[10px] text-slate-400">Min</div>
-                                <div class="font-semibold text-rose-500">${min}</div>
+                                <div class="font-semibold text-rose-500">${min === '0.00' ? '-' : min}</div>
                             </div>
                             <div class="text-right">
                                 <div class="text-[10px] text-slate-400">Max</div>
-                                <div class="font-semibold text-blue-500">${max}</div>
+                                <div class="font-semibold text-blue-500">${max === '0.00' ? '-' : max}</div>
                             </div>
                         </div>
                     </div>
@@ -505,7 +488,6 @@
             }).join('');
         }
 
-        // ============ FILTER ============
         function filterData() {
             const ptn = document.getElementById('searchPTN').value.toLowerCase();
             const prodi = document.getElementById('searchProdi').value.toLowerCase();
@@ -522,7 +504,6 @@
             renderData(filtered);
         }
 
-        // Live search
         ['searchPTN', 'searchProdi', 'filterJenjang'].forEach(id => {
             document.getElementById(id).addEventListener('input', filterData);
         });
