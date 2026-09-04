@@ -17,11 +17,29 @@
             }
         }
     </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .accordion-row { transition: all 0.3s ease; }
+        .accordion-detail { 
+            max-height: 0; 
+            overflow: hidden; 
+            transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+            opacity: 0;
+        }
+        .accordion-detail.open { 
+            max-height: 600px; 
+            opacity: 1; 
+        }
+        .rotate-icon { transition: transform 0.3s ease; }
+        .rotate-icon.open { transform: rotate(180deg); }
+        .subtes-card { transition: transform 0.2s ease; }
+        .subtes-card:hover { transform: translateY(-2px); }
+    </style>
 </head>
 <body class="bg-background text-slate-800 antialiased min-h-screen">
 
     <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-slate-100">
+    <header class="bg-white shadow-sm border-b border-slate-100 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <a href="https://suksesptn.github.io" class="text-slate-400 hover:text-primary">
@@ -35,17 +53,17 @@
                     <p class="text-xs text-slate-500">Database Kelulusan 2026</p>
                 </div>
             </div>
-            <button onclick="logout()" id="logoutBtn" class="hidden text-slate-400 hover:text-rose-500">
+            <button onclick="logout()" id="logoutBtn" class="hidden text-slate-400 hover:text-rose-500 transition-colors">
                 <i data-lucide="log-out" class="w-5 h-5"></i>
             </button>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-8">
+    <main class="max-w-7xl mx-auto px-4 py-6 sm:py-8">
         
         <!-- HALAMAN LOGIN -->
-        <div id="loginPage" class="max-w-md mx-auto mt-10">
-            <div class="bg-white rounded-2xl shadow-lg p-8">
+        <div id="loginPage" class="max-w-md mx-auto mt-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sm:p-8">
                 <div class="text-center mb-6">
                     <div class="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i data-lucide="lock" class="w-8 h-8 text-primary"></i>
@@ -55,11 +73,11 @@
                 </div>
 
                 <!-- Tab Login -->
-                <div class="flex gap-2 mb-6">
-                    <button onclick="switchTab('siswa')" id="tabSiswa" class="flex-1 py-2 px-4 rounded-lg bg-primary text-white font-medium">
+                <div class="flex gap-2 mb-6 bg-slate-100 p-1 rounded-xl">
+                    <button onclick="switchTab('siswa')" id="tabSiswa" class="flex-1 py-2 px-4 rounded-lg bg-primary text-white font-medium transition-all">
                         Siswa/Orangtua
                     </button>
-                    <button onclick="switchTab('guru')" id="tabGuru" class="flex-1 py-2 px-4 rounded-lg bg-slate-100 text-slate-600 font-medium">
+                    <button onclick="switchTab('guru')" id="tabGuru" class="flex-1 py-2 px-4 rounded-lg text-slate-600 font-medium transition-all">
                         Guru
                     </button>
                 </div>
@@ -68,13 +86,13 @@
                 <form id="formSiswa" class="space-y-4">
                     <div>
                         <label class="block text-sm font-semibold mb-2">NIS</label>
-                        <input type="text" id="nis" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-emerald-200 outline-none" placeholder="Masukkan NIS">
+                        <input type="text" id="nis" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-emerald-200 outline-none" placeholder="Masukkan NIS">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold mb-2">Tanggal Lahir</label>
-                        <input type="date" id="tglLahir" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-emerald-200 outline-none">
+                        <input type="date" id="tglLahir" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-emerald-200 outline-none">
                     </div>
-                    <button type="submit" class="w-full bg-primary hover:bg-primaryDark text-white font-semibold py-3 rounded-xl">
+                    <button type="submit" class="w-full bg-primary hover:bg-primaryDark text-white font-semibold py-3 rounded-xl transition-all">
                         Masuk sebagai Siswa
                     </button>
                 </form>
@@ -83,82 +101,113 @@
                 <form id="formGuru" class="space-y-4 hidden">
                     <div>
                         <label class="block text-sm font-semibold mb-2">Username</label>
-                        <input type="text" id="username" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-emerald-200 outline-none" placeholder="Username">
+                        <input type="text" id="username" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-emerald-200 outline-none" placeholder="Username">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold mb-2">Password</label>
-                        <input type="password" id="password" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-emerald-200 outline-none" placeholder="Password">
+                        <input type="password" id="password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-emerald-200 outline-none" placeholder="Password">
                     </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl">
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-all">
                         Masuk sebagai Guru
                     </button>
                 </form>
 
-                <div id="loginError" class="hidden mt-4 p-3 rounded-lg bg-rose-50 text-rose-700 text-sm"></div>
+                <div id="loginError" class="hidden mt-4 p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-sm text-center"></div>
             </div>
         </div>
 
-        <!-- DASHBOARD (Hidden by default) -->
+        <!-- DASHBOARD -->
         <div id="dashboard" class="hidden space-y-6">
             
             <!-- Welcome Banner -->
-            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-6 text-white">
-                <h2 class="text-2xl font-bold mb-2">📊 Analisis SNBT 2026</h2>
-                <p class="opacity-90">Gunakan data kelulusan tahun lalu untuk menentukan target skor Anda</p>
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-lg">
+                <div class="flex items-start gap-4">
+                    <div class="bg-white/20 p-3 rounded-xl">
+                        <i data-lucide="graduation-cap" class="w-8 h-8"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold mb-1">Analisis SNBT 2026</h2>
+                        <p class="opacity-90 text-sm">Gunakan data kelulusan tahun lalu untuk menentukan target skor UTBK Anda</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Search & Filter -->
-            <div class="bg-white rounded-2xl shadow-sm p-5">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+                <div class="flex items-center gap-2 mb-4">
+                    <i data-lucide="filter" class="w-5 h-5 text-primary"></i>
+                    <h3 class="font-semibold text-slate-900">Cari Jurusan Impianmu</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Cari PTN</label>
-                        <input type="text" id="searchPTN" placeholder="Contoh: ITB, UI, UGM" class="w-full px-4 py-2 rounded-lg border border-slate-200 focus:border-primary outline-none">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">PTN</label>
+                        <input type="text" id="searchPTN" placeholder="Contoh: ITB, UI" class="w-full px-3 py-2.5 rounded-lg border border-slate-200 focus:border-primary outline-none text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Cari Jurusan</label>
-                        <input type="text" id="searchProdi" placeholder="Contoh: Teknik Informatika" class="w-full px-4 py-2 rounded-lg border border-slate-200 focus:border-primary outline-none">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Jurusan</label>
+                        <input type="text" id="searchProdi" placeholder="Contoh: Informatika" class="w-full px-3 py-2.5 rounded-lg border border-slate-200 focus:border-primary outline-none text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Jenjang</label>
-                        <select id="filterJenjang" class="w-full px-4 py-2 rounded-lg border border-slate-200 focus:border-primary outline-none">
-                            <option value="">Semua</option>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Jenjang</label>
+                        <select id="filterJenjang" class="w-full px-3 py-2.5 rounded-lg border border-slate-200 focus:border-primary outline-none text-sm">
+                            <option value="">Semua Jenjang</option>
                             <option value="S1">S1</option>
                             <option value="D4">D4</option>
                             <option value="D3">D3</option>
+                            <option value="S2">S2</option>
+                            <option value="S3">S3</option>
                         </select>
                     </div>
                 </div>
-                <button onclick="filterData()" class="mt-4 bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primaryDark">
-                    <i data-lucide="search" class="w-4 h-4 inline mr-2"></i>Cari
-                </button>
             </div>
 
-            <!-- Statistics Cards -->
-            <div id="statsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Will be populated by JS -->
-            </div>
-
-            <!-- Data Table -->
-            <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-                <div class="p-5 border-b border-slate-100">
-                    <h3 class="text-lg font-bold">Data Kelulusan per Jurusan</h3>
+            <!-- Info Box -->
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+                <i data-lucide="info" class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"></i>
+                <div class="text-sm text-blue-800">
+                    <p class="font-semibold mb-1">Cara Membaca Data</p>
+                    <p class="text-blue-700">Klik tombol <strong>"Lihat Detail"</strong> untuk melihat skor rata-rata per subtes. Gunakan data ini sebagai <strong>target minimum</strong> yang harus kamu raih.</p>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-slate-50">
-                            <tr>
-                                <th class="px-4 py-3 text-left text-sm font-semibold">PTN</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold">Jurusan</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold">Jenjang</th>
-                                <th class="px-4 py-3 text-center text-sm font-semibold">Rata-rata Skor</th>
-                                <th class="px-4 py-3 text-center text-sm font-semibold">Skor Min</th>
-                                <th class="px-4 py-3 text-center text-sm font-semibold">Skor Max</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dataTable" class="divide-y divide-slate-100">
-                            <!-- Will be populated by JS -->
-                        </tbody>
-                    </table>
+            </div>
+
+            <!-- Data Table dengan Accordion -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="table" class="w-5 h-5 text-primary"></i>
+                        <h3 class="text-lg font-bold">Data Kelulusan per Jurusan</h3>
+                    </div>
+                    <span id="resultCount" class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full font-medium">0 jurusan</span>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="p-12 text-center">
+                    <div class="animate-spin w-10 h-10 border-4 border-emerald-200 border-t-primary rounded-full mx-auto mb-4"></div>
+                    <p class="text-slate-500">Memuat data...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="hidden p-12 text-center">
+                    <i data-lucide="search-x" class="w-12 h-12 text-slate-300 mx-auto mb-3"></i>
+                    <p class="text-slate-500">Tidak ada data yang cocok dengan pencarian</p>
+                </div>
+
+                <!-- Table Content -->
+                <div id="tableContent" class="hidden">
+                    <!-- Header (desktop only) -->
+                    <div class="hidden md:grid md:grid-cols-12 gap-4 px-5 py-3 bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-600 uppercase tracking-wide">
+                        <div class="md:col-span-1">No</div>
+                        <div class="md:col-span-3">PTN</div>
+                        <div class="md:col-span-4">Jurusan</div>
+                        <div class="md:col-span-2">Jenjang</div>
+                        <div class="md:col-span-1 text-center">Rata-rata</div>
+                        <div class="md:col-span-1 text-right">Aksi</div>
+                    </div>
+
+                    <!-- Rows Container -->
+                    <div id="rowsContainer" class="divide-y divide-slate-100">
+                        <!-- Diisi oleh JavaScript -->
+                    </div>
                 </div>
             </div>
 
@@ -166,13 +215,25 @@
 
     </main>
 
+    <footer class="bg-white border-t border-slate-100 mt-auto py-6">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-xs text-slate-400">© 2026 Tim Sukses PTN Al Bayan</p>
+        </div>
+    </footer>
+
     <script>
+        // ==========================================================
+        // GANTI URL INI DENGAN URL APPS SCRIPT ANDA
+        // ==========================================================
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw9xOPd0jC-_0nSKpOZpRRzxO4pJW9sYmeuT8KwkpPTG3IAXFMgTAPCAet39ubnaVu9/exec";
+        
         let currentUser = null;
         let allData = [];
+        let expandedRow = null;
 
         lucide.createIcons();
 
+        // ============ TAB SWITCH ============
         function switchTab(role) {
             const tabSiswa = document.getElementById('tabSiswa');
             const tabGuru = document.getElementById('tabGuru');
@@ -180,18 +241,19 @@
             const formGuru = document.getElementById('formGuru');
 
             if (role === 'siswa') {
-                tabSiswa.className = 'flex-1 py-2 px-4 rounded-lg bg-primary text-white font-medium';
-                tabGuru.className = 'flex-1 py-2 px-4 rounded-lg bg-slate-100 text-slate-600 font-medium';
+                tabSiswa.className = 'flex-1 py-2 px-4 rounded-lg bg-primary text-white font-medium transition-all shadow-sm';
+                tabGuru.className = 'flex-1 py-2 px-4 rounded-lg text-slate-600 font-medium transition-all';
                 formSiswa.classList.remove('hidden');
                 formGuru.classList.add('hidden');
             } else {
-                tabGuru.className = 'flex-1 py-2 px-4 rounded-lg bg-blue-600 text-white font-medium';
-                tabSiswa.className = 'flex-1 py-2 px-4 rounded-lg bg-slate-100 text-slate-600 font-medium';
+                tabGuru.className = 'flex-1 py-2 px-4 rounded-lg bg-blue-600 text-white font-medium transition-all shadow-sm';
+                tabSiswa.className = 'flex-1 py-2 px-4 rounded-lg text-slate-600 font-medium transition-all';
                 formGuru.classList.remove('hidden');
                 formSiswa.classList.add('hidden');
             }
         }
 
+        // ============ LOGIN HANDLERS ============
         document.getElementById('formSiswa').addEventListener('submit', async function(e) {
             e.preventDefault();
             await login('siswa', document.getElementById('nis').value, document.getElementById('tglLahir').value);
@@ -204,8 +266,11 @@
 
         async function login(role, param1, param2) {
             const url = role === 'siswa' 
-                ? `${APPS_SCRIPT_URL}?action=loginSiswa&nis=${param1}&tglLahir=${param2}`
-                : `${APPS_SCRIPT_URL}?action=loginGuru&username=${param1}&password=${param2}`;
+                ? `${APPS_SCRIPT_URL}?action=loginSiswa&nis=${encodeURIComponent(param1)}&tglLahir=${param2}`
+                : `${APPS_SCRIPT_URL}?action=loginGuru&username=${encodeURIComponent(param1)}&password=${encodeURIComponent(param2)}`;
+
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.classList.add('hidden');
 
             try {
                 const res = await fetch(url);
@@ -216,10 +281,12 @@
                     showDashboard();
                     loadData();
                 } else {
-                    showError(result.message);
+                    errorDiv.textContent = result.message || 'Login gagal';
+                    errorDiv.classList.remove('hidden');
                 }
             } catch (err) {
-                showError('Gagal terhubung ke server');
+                errorDiv.textContent = 'Gagal terhubung ke server. Periksa koneksi internet.';
+                errorDiv.classList.remove('hidden');
             }
         }
 
@@ -227,93 +294,248 @@
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('dashboard').classList.remove('hidden');
             document.getElementById('logoutBtn').classList.remove('hidden');
+            lucide.createIcons();
         }
 
         async function loadData() {
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('tableContent').classList.add('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+
             try {
                 const res = await fetch(`${APPS_SCRIPT_URL}?action=getStatistikJurusan`);
                 const result = await res.json();
 
+                document.getElementById('loadingState').classList.add('hidden');
+
                 if (result.success) {
                     allData = result.statistik;
                     renderData(allData);
+                } else {
+                    showError(result.message);
                 }
             } catch (err) {
-                console.error(err);
+                document.getElementById('loadingState').classList.add('hidden');
+                showError('Gagal memuat data');
             }
         }
 
+        function showError(msg) {
+            document.getElementById('emptyState').classList.remove('hidden');
+            document.getElementById('emptyState').innerHTML = `
+                <i data-lucide="alert-circle" class="w-12 h-12 text-rose-300 mx-auto mb-3"></i>
+                <p class="text-rose-600">${msg}</p>
+            `;
+            lucide.createIcons();
+        }
+
+        // ============ RENDER DATA DENGAN ACCORDION ============
         function renderData(data) {
-            const tbody = document.getElementById('dataTable');
-            const statsContainer = document.getElementById('statsContainer');
-            
-            tbody.innerHTML = '';
-            statsContainer.innerHTML = '';
+            const container = document.getElementById('rowsContainer');
+            const tableContent = document.getElementById('tableContent');
+            const emptyState = document.getElementById('emptyState');
+            const resultCount = document.getElementById('resultCount');
 
-            data.forEach(item => {
-                // Calculate average total score
-                const scores = Object.values(item.scores);
-                const avgTotal = (scores.reduce((a, b) => parseFloat(a) + parseFloat(b), 0) / scores.length).toFixed(2);
-                const minTotal = Object.values(item.min).reduce((a, b) => parseFloat(a) + parseFloat(b), 0).toFixed(2);
-                const maxTotal = Object.values(item.max).reduce((a, b) => parseFloat(a) + parseFloat(b), 0).toFixed(2);
+            container.innerHTML = '';
+            resultCount.textContent = `${data.length} jurusan`;
 
-                // Add to table
-                const row = tbody.insertRow();
-                row.className = 'hover:bg-slate-50';
+            if (data.length === 0) {
+                tableContent.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                emptyState.innerHTML = `
+                    <div class="p-12 text-center">
+                        <i data-lucide="search-x" class="w-12 h-12 text-slate-300 mx-auto mb-3"></i>
+                        <p class="text-slate-500">Tidak ada data yang cocok dengan pencarian</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            tableContent.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            data.forEach((item, index) => {
+                const scores = item.scores || {};
+                const scoreKeys = Object.keys(scores);
+                const avgTotal = scoreKeys.length > 0 
+                    ? (scoreKeys.reduce((a, k) => a + parseFloat(scores[k] || 0), 0) / scoreKeys.length).toFixed(2)
+                    : 0;
+
+                // Main Row
+                const row = document.createElement('div');
+                row.className = 'accordion-row';
+                row.dataset.id = index;
+
                 row.innerHTML = `
-                    <td class="px-4 py-3 text-sm font-medium">${item.ptn}</td>
-                    <td class="px-4 py-3 text-sm">${item.prodi}</td>
-                    <td class="px-4 py-3 text-sm"><span class="px-2 py-1 rounded bg-slate-100 text-xs font-medium">${item.jenjang}</span></td>
-                    <td class="px-4 py-3 text-center text-sm font-bold text-emerald-600">${avgTotal}</td>
-                    <td class="px-4 py-3 text-center text-sm text-rose-600">${minTotal}</td>
-                    <td class="px-4 py-3 text-center text-sm text-blue-600">${maxTotal}</td>
+                    <div class="grid grid-cols-2 md:grid-cols-12 gap-2 md:gap-4 px-4 md:px-5 py-4 hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleAccordion(${index})">
+                        <div class="md:col-span-1 flex md:block items-center">
+                            <span class="md:hidden text-xs text-slate-400 mr-2">No:</span>
+                            <span class="text-sm font-semibold text-slate-500">${index + 1}</span>
+                        </div>
+                        <div class="md:col-span-3">
+                            <span class="md:hidden text-xs text-slate-400">PTN: </span>
+                            <span class="text-sm font-bold text-slate-900">${item.ptn || '-'}</span>
+                        </div>
+                        <div class="md:col-span-4">
+                            <span class="md:hidden text-xs text-slate-400">Jurusan: </span>
+                            <span class="text-sm text-slate-700 font-medium">${item.prodi || '-'}</span>
+                        </div>
+                        <div class="md:col-span-2">
+                            <span class="md:hidden text-xs text-slate-400">Jenjang: </span>
+                            <span class="inline-block px-2 py-1 rounded-md bg-slate-100 text-xs font-semibold text-slate-700">${item.jenjang || '-'}</span>
+                        </div>
+                        <div class="md:col-span-1 flex md:block items-center justify-start md:justify-center">
+                            <span class="md:hidden text-xs text-slate-400 mr-2">Rata²:</span>
+                            <span class="text-base md:text-lg font-bold text-emerald-600">${avgTotal}</span>
+                        </div>
+                        <div class="md:col-span-1 flex md:block items-center justify-end">
+                            <button class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-lg transition-colors">
+                                <span class="detail-text">Detail</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 rotate-icon detail-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Detail Panel (Accordion) -->
+                    <div class="accordion-detail bg-gradient-to-br from-slate-50 to-emerald-50/30 border-t border-slate-100" id="detail-${index}">
+                        <div class="px-4 md:px-5 py-5">
+                            <div class="flex items-center gap-2 mb-4">
+                                <i data-lucide="bar-chart-2" class="w-5 h-5 text-primary"></i>
+                                <h4 class="font-bold text-slate-900">Detail Skor per Subtes</h4>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3" id="subtes-grid-${index}">
+                                <!-- Diisi oleh JavaScript -->
+                            </div>
+
+                            <div class="mt-4 pt-4 border-t border-slate-200 flex flex-wrap gap-4 text-xs text-slate-600">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded bg-emerald-500"></span>
+                                    <span>Rata-rata skor subtes</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded bg-rose-400"></span>
+                                    <span>Skor terendah</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded bg-blue-400"></span>
+                                    <span>Skor tertinggi</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 `;
 
-                // Add stats card (top 3)
-                if (statsContainer.children.length < 6) {
-                    const card = document.createElement('div');
-                    card.className = 'bg-white rounded-xl shadow-sm p-4 border border-slate-100';
-                    card.innerHTML = `
-                        <h4 class="font-semibold text-sm mb-2 truncate">${item.prodi}</h4>
-                        <p class="text-xs text-slate-500 mb-3">${item.ptn} • ${item.jenjang}</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs text-slate-600">Rata-rata:</span>
-                            <span class="text-lg font-bold text-emerald-600">${avgTotal}</span>
-                        </div>
-                        <div class="mt-2 text-xs text-slate-500">
-                            Range: ${minTotal} - ${maxTotal}
-                        </div>
-                    `;
-                    statsContainer.appendChild(card);
-                }
+                container.appendChild(row);
             });
 
             lucide.createIcons();
         }
 
+        // ============ ACCORDION TOGGLE ============
+        function toggleAccordion(index) {
+            const detail = document.getElementById(`detail-${index}`);
+            const row = document.querySelector(`.accordion-row[data-id="${index}"]`);
+            const icon = row.querySelector('.detail-icon');
+            const text = row.querySelector('.detail-text');
+
+            // Jika row ini sudah terbuka, tutup
+            if (expandedRow === index) {
+                detail.classList.remove('open');
+                icon.classList.remove('open');
+                text.textContent = 'Detail';
+                expandedRow = null;
+                return;
+            }
+
+            // Tutup row sebelumnya jika ada
+            if (expandedRow !== null) {
+                const prevDetail = document.getElementById(`detail-${expandedRow}`);
+                const prevRow = document.querySelector(`.accordion-row[data-id="${expandedRow}"]`);
+                if (prevDetail) prevDetail.classList.remove('open');
+                if (prevRow) {
+                    prevRow.querySelector('.detail-icon').classList.remove('open');
+                    prevRow.querySelector('.detail-text').textContent = 'Detail';
+                }
+            }
+
+            // Buka row baru
+            detail.classList.add('open');
+            icon.classList.add('open');
+            text.textContent = 'Tutup';
+            expandedRow = index;
+
+            // Render subtes jika belum
+            const grid = document.getElementById(`subtes-grid-${index}`);
+            if (grid.children.length === 0) {
+                renderSubtes(index);
+            }
+        }
+
+        function renderSubtes(index) {
+            const item = allData[index];
+            const grid = document.getElementById(`subtes-grid-${index}`);
+            const scores = item.scores || {};
+            const mins = item.min || {};
+            const maxs = item.max || {};
+
+            // Urutkan subtes (rata-rata tertinggi dulu)
+            const sortedKeys = Object.keys(scores).sort((a, b) => parseFloat(scores[b]) - parseFloat(scores[a]));
+
+            grid.innerHTML = sortedKeys.map(subtes => {
+                const avg = parseFloat(scores[subtes] || 0).toFixed(2);
+                const min = parseFloat(mins[subtes] || 0).toFixed(2);
+                const max = parseFloat(maxs[subtes] || 0).toFixed(2);
+                
+                return `
+                    <div class="subtes-card bg-white rounded-xl p-3 border border-slate-200 shadow-sm">
+                        <div class="text-xs text-slate-500 mb-2 font-medium leading-tight">${subtes}</div>
+                        <div class="flex items-baseline gap-1 mb-2">
+                            <span class="text-xl font-bold text-emerald-600">${avg}</span>
+                            <span class="text-xs text-slate-400">rata²</span>
+                        </div>
+                        <div class="flex justify-between text-xs pt-2 border-t border-slate-100">
+                            <div>
+                                <div class="text-[10px] text-slate-400">Min</div>
+                                <div class="font-semibold text-rose-500">${min}</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-[10px] text-slate-400">Max</div>
+                                <div class="font-semibold text-blue-500">${max}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ============ FILTER ============
         function filterData() {
             const ptn = document.getElementById('searchPTN').value.toLowerCase();
             const prodi = document.getElementById('searchProdi').value.toLowerCase();
             const jenjang = document.getElementById('filterJenjang').value;
 
             const filtered = allData.filter(item => {
-                const matchPTN = item.ptn.toLowerCase().includes(ptn);
-                const matchProdi = item.prodi.toLowerCase().includes(prodi);
+                const matchPTN = (item.ptn || '').toLowerCase().includes(ptn);
+                const matchProdi = (item.prodi || '').toLowerCase().includes(prodi);
                 const matchJenjang = jenjang ? item.jenjang === jenjang : true;
                 return matchPTN && matchProdi && matchJenjang;
             });
 
+            expandedRow = null;
             renderData(filtered);
         }
 
-        function showError(msg) {
-            const errDiv = document.getElementById('loginError');
-            errDiv.textContent = msg;
-            errDiv.classList.remove('hidden');
-        }
+        // Live search
+        ['searchPTN', 'searchProdi', 'filterJenjang'].forEach(id => {
+            document.getElementById(id).addEventListener('input', filterData);
+        });
 
         function logout() {
             currentUser = null;
+            allData = [];
+            expandedRow = null;
             document.getElementById('loginPage').classList.remove('hidden');
             document.getElementById('dashboard').classList.add('hidden');
             document.getElementById('logoutBtn').classList.add('hidden');
